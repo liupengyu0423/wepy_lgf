@@ -1,0 +1,161 @@
+<template>
+  <view class='container'>
+    <div class="rate-wrapp">
+      <view class="common-wrap">
+        <view class="label">总体：</view>
+        <wxc-rate size='50' value="{{rate[0]}}" count="5" bind:rate="onClick(0)" class="rate"></wxc-rate>
+      </view>
+      <view class="common-wrap">
+        <view class="label">交通：</view>
+        <wxc-rate size='50' value="{{rate[1]}}" count="5" bind:rate="onClick(1)" class="rate"></wxc-rate>
+      </view>
+      <view class="common-wrap">
+        <view class="label">装修效果：</view>
+        <wxc-rate size='50' value="{{rate[2]}}" count="5" bind:rate="onClick(2)" class="rate"></wxc-rate>
+      </view>
+      <view class="common-wrap">
+        <view class="label">卫生状况：</view>
+        <wxc-rate size='50' value="{{rate[3]}}" count="5" bind:rate="onClick(3)" class="rate"></wxc-rate>
+      </view>
+      <view class="common-wrap">
+        <view class="label">空气条件：</view>
+        <wxc-rate size='50' value="{{rate[4]}}" count="5" bind:rate="onClick(4)" class="rate"></wxc-rate>
+      </view>
+      <view class="common-wrap">
+        <view class="label">k歌设备：</view>
+        <wxc-rate size='50' value="{{rate[5]}}" count="5" bind:rate="onClick(5)" class="rate"></wxc-rate>
+      </view>
+      <view class="common-wrap">
+        <view class="label">音效：</view>
+        <wxc-rate size='50' value="{{rate[6]}}" count="5" bind:rate="onClick(6)" class="rate"></wxc-rate>
+      </view>
+      <view class="common-wrap">
+        <view class="label">服务：</view>
+        <wxc-rate size='50' value="{{rate[7]}}" count="5" bind:rate="onClick(7)" class="rate"></wxc-rate>
+      </view>
+      <view class="common-wrap">
+        <view class="label">价格：</view>
+        <wxc-rate size='50' value="{{rate[8]}}" count="5" bind:rate="onClick(8)" class="rate"></wxc-rate>
+      </view>
+      <view class="common-wrap">
+        <view class="label">娱乐效果：</view>
+        <wxc-rate size='50' value="{{rate[9]}}" count="5" bind:rate="onClick(9)" class="rate"></wxc-rate>
+      </view>
+    </div>
+    <view class="common-wrap upload">
+      <view class="label">上传照片</view>
+      <Upload></Upload>
+    </view>
+    <div class="common-wrap">
+      <view class="label">评价：</view>
+      <textarea value='{{description}}' bindblur='bindTextAreaBlur' cols="30" rows="5" placeholder="请输入评价内容"></textarea>
+    </div>
+    <div class="common-btn">
+      <wxc-button size="normal" type="success" value="提交" bind:click='submit'></wxc-button>
+    </div>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import { Apis, Http } from 'libs/interface'
+import Upload from 'components/upload'
+
+export default class Judge extends wepy.page {
+  config = {
+    navigationBarTitleText: 'ktv评价',
+    usingComponents: {
+      'wxc-button': '../../packages/@minui/wxc-button/dist/index',
+      'wxc-rate': '../../packages/@minui/wxc-rate/dist/index',
+      'wxc-icon': '../../packages/@minui/wxc-icon/dist/index'
+    }
+  }
+  data = {
+    showLoginBox: true,
+    rate: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    id: 0,
+    description: '',
+    imgArray: []
+  }
+  components = {
+    Upload
+  }
+  events = {
+    getImgs (arr) {
+      this.imgArray = arr
+    }
+  }
+  onLoad(option) {
+    this.id = option.id
+  }
+  methods = {
+    onClick (index, e) {
+      this.rate[index] = e.detail.value
+    },
+    bindTextAreaBlur (e) {
+      this.description = e.detail.value
+    }
+  }
+  async submit () {
+    let params = {
+      ktv_id: this.id,
+      score: this.rate[0] * 2,
+      score1: this.rate[1] * 2,
+      score2: this.rate[2] * 2,
+      score3: this.rate[3] * 2,
+      score4: this.rate[4] * 2,
+      score5: this.rate[5] * 2,
+      score6: this.rate[6] * 2,
+      score7: this.rate[7] * 2,
+      score8: this.rate[8] * 2,
+      score9: this.rate[9] * 2,
+      imgs: this.imgArray,
+      description: this.description
+    }
+    await Http.get({
+      url: Apis.url + Apis.ktvAddComment,
+      data: params
+    })
+    wx.redirectTo({
+      url: './ktvDetail?id=' + this.id
+    })
+  }
+}
+</script>
+<style lang="scss" scoped>
+.common-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 30rpx 36rpx 0;
+  border-top: 1px solid #f3f3f3;
+  margin-top: 30rpx;
+  .label {
+    min-width: 163rpx;
+    height: 46rpx;
+    line-height: 46rpx;
+    font-size: 28rpx;
+  }
+  .text {
+    font-size: 28rpx;
+    .icon {
+      position: absolute;
+      right: 36rpx;
+      top: 30rpx;
+    }
+  }
+  textarea {
+    border: 1px solid #f3f3f3;
+    font-size: 12px;
+    padding: 10rpx;
+  }
+}
+.upload {
+  display: block;
+}
+.common-btn {
+  display: flex;
+  justify-content: center;
+  margin: 100rpx auto 200rpx;
+}
+</style>

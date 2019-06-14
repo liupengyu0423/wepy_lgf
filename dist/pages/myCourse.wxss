@@ -1,0 +1,29 @@
+.myCourse._411cb92 {
+  margin-top: 36rpx; }
+
+.empty._411cb92 {
+  margin: 0 auto; }
+  .empty view._411cb92 {
+    font-size: 10.5pt;
+    color: #6e6e6e;
+    margin-left: 30rpx;
+    text-align: center;
+    line-height: 46rpx; }
+  .empty image._411cb92 {
+    margin: 100rpx auto 50rpx; }
+
+.empty1._411cb92 {
+  width: 586rpx;
+  height: 444rpx; }
+
+.empty2._411cb92 {
+  width: 586rpx;
+  height: 396rpx; }
+
+.empty3._411cb92 {
+  width: 586rpx;
+  height: 454rpx; }
+
+.loading._411cb92 {
+  height: 50rpx;
+  line-height: 50rpx; }

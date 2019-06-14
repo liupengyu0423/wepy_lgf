@@ -1,0 +1,43 @@
+
+  <view class="container _4bdc1c8"  wx:if="{{coursesData}}">
+    <view class="courses _4bdc1c8">
+      
+  <view class="course-list _b8ada4e _4bdc1c8">
+    <view class="course-wrap _b8ada4e"  wx:for="{{$SpecialCourse$coursesData}}" wx:for-item="obj" wx:for-index="index" wx:key="{{obj.id}}">
+      <navigator url="./coursesDetail?id={{obj.id}}" hover-class="none" class="_b8ada4e">
+        <view class="course-img _b8ada4e">
+          <view class="unload _b8ada4e"><image src="../../images/error.png" class="_b8ada4e"/></view>
+          <image src="{{obj.cover}}" class="_b8ada4e"/>
+        </view>
+        <view class="course-des _b8ada4e">
+          <view class="course-title _b8ada4e">
+            <view class="left com-tit _b8ada4e">
+              <image src="../../images/hot.png" class="_b8ada4e"/>
+              {{obj.title}}
+            </view>
+            <view class="right _b8ada4e">{{obj.lesson_cnt}} 课时</view>
+          </view>
+          <view class="com-des _b8ada4e">{{obj.describe}}</view>
+          <view class="learn _b8ada4e">
+            <view class="people _b8ada4e">共有{{obj.play_count}}人学过</view>
+            <view class="like {{obj.is_collection?'hightlight':''}} _b8ada4e" catchtap="$SpecialCourse$collect" data-param="coursesData" data-id="{{obj.id}}" data-ind="{{index}}" data-collect="{{obj.is_collection}}">
+              <image src="../../images/like.png" wx:if="{{!obj.is_collection}}" class="_b8ada4e"/>
+              <image src="../../images/liked.png" wx:else class="_b8ada4e"/>
+              <text class="_b8ada4e">{{obj.fake_count}}</text>
+            </view>
+          </view>
+          <view class="price _b8ada4e">
+              <text class="curprice _b8ada4e">￥<text class="big _b8ada4e">{{obj.fee/100}}</text></text>
+              <text class="oldprice _b8ada4e">￥{{obj.origin_fee/100}}</text>
+            </view>
+        </view>
+        <view class="block-short _b8ada4e" wx:if="{{$SpecialCourse$coursesData.length-1>index}}"/>
+      </navigator>
+    </view>
+  </view>
+    </view>
+    <view class="load-more loading _4bdc1c8" id="load-more" animation="{{animationData}}">
+      END
+      <image src="../../images/smile.png" class="smile _4bdc1c8"/>
+    </view>
+  </view>

@@ -1,0 +1,134 @@
+
+  <view class="course-detail container course-wrap {{iphonex}} _ba54186"  wx:if="{{lessonList}}">
+    <view class="course-img _ba54186">
+      <view class="unload _ba54186"><image src="../../images/error.png" class="_ba54186"/></view>
+      <image src="{{courseData.inside}}" class="_ba54186"/>
+      <view class="people _ba54186">
+        <view class="avas _ba54186">
+          <image wx:for="{{random}}" wx:for-item="obj" wx:for-index="index" wx:key="{{index}}" src="{{obj}}" wx:if="{{index<3}}" style="border-radius:50%;" class="_ba54186"/>
+        </view>
+        <view class="count _ba54186">
+          <view class="name-wrap _ba54186"><view class="name _ba54186">{{courseData.user_info[0].nickname||'迷'}}</view>等</view>
+          <view class="_ba54186"> {{courseData.roundCount}} 人参加</view>
+        </view>
+      </view>
+    </view>
+    <view class="course-des _ba54186">
+      <view class="course-title _ba54186">
+        <view class="left com-tit com-tit-detail _ba54186">
+          <image src="../../images/hot.png" class="_ba54186"/>
+          {{courseData.title}}
+        </view>
+        <view class="right _ba54186">{{courseData.lesson_cnt}} 课时</view>
+      </view>
+      <view class="com-des _ba54186">{{courseData.describe}}</view>
+      <view class="learn _ba54186">
+        <view class="people _ba54186">共有{{courseData.play_count}}人学过</view>
+        <view class="like {{courseData.is_collection?'hightlight':''}} _ba54186" catchtap="collect" data-param="courseData" data-id="{{courseData.id}}" data-ind="{{index}}" data-collect="{{courseData.is_collection}}">
+          <image src="../../images/like.png" wx:if="{{!courseData.is_collection}}" class="_ba54186"/>
+          <image src="../../images/liked.png" wx:else class="_ba54186"/>
+          <text class="_ba54186">{{courseData.fake_count}}</text>
+        </view>
+      </view>
+      <view class="price _ba54186" wx:if="{{courseData.fee}}">
+          <text class="curprice _ba54186" wx:if="{{!payed}}">￥<text class="big _ba54186">{{courseData.fee/100}}</text></text>
+          <text class="oldprice _ba54186" wx:if="{{!payed}}">￥{{courseData.origin_fee/100}}</text>
+          <text class="curprice _ba54186" wx:if="{{payed}}">已购课程</text>
+        </view>
+    </view>
+    <view class="block _ba54186"/>
+    <view class="group _ba54186">
+      <view class="group-tit _ba54186">
+        <view class="left _ba54186">
+          <image src="../../images/group.png" class="group-icon _ba54186"/>
+          进入学习小组群
+        </view>
+        <view class="right _ba54186" bindtap="toggle">
+          <text wx:if="{{!code}}" class="_ba54186">查看</text>
+          <text wx:if="{{code}}" class="_ba54186">收起</text>
+          <image src="../../images/top.png" class="top {{code?'':'bottom'}} _ba54186"/>
+        </view>
+      </view>
+      <view class="group-des _ba54186" wx:if="{{code}}">
+        <view class="des-word _ba54186">欢迎添加助教微信号，助教将邀请你加入学习小组群，每日交流学习心得，更有干货分享。</view>
+        <view class="weixin _ba54186">
+          <view class="left _ba54186">
+            <view class="weixin-title _ba54186">微信号：</view>
+            <view class="weixin-name _ba54186">lian-ge-fang</view>
+          </view>
+          <view class="right _ba54186" bindtap="copy">复制微信号</view>
+        </view>
+      </view>
+    </view>
+    <view class="block _ba54186"/>
+    <view class="songList _ba54186">
+      <view class="songList-tit _ba54186">你将学到</view>
+      <view class="song-wrap _ba54186" wx:for="{{lessonList}}" wx:for-item="obj" wx:for-index="index" wx:key="{{index}}">
+        <view class="group-tit sort-tit _ba54186" wx:if="{{chapter_name[index]}}" bindtap="toggleSort" data-wpytogglesort-a="{{index}}">
+          <view class="left _ba54186">第 {{index*1+1}} 章：{{chapter_name[index]}}（{{obj.length}} 课时）</view>
+          <view class="right _ba54186">
+            <text wx:if="{{!toggle[index]}}" class="_ba54186">展开</text>
+            <text wx:if="{{toggle[index]}}" class="_ba54186">收起</text>
+            <image src="../../images/top.png" class="top {{toggle[index]?'':'bottom'}} _ba54186"/>
+          </view>
+        </view>
+        <view wx:for="{{obj}}" wx:for-item="item" wx:for-index="ind" wx:key="{{item.id}}" wx:if="{{(!chapter_name[index]&&ind<page)||toggle[index]}}" class="_ba54186">
+          <navigator url="./freeDetail?id={{item.id}}" hover-class="none" class="_ba54186">
+            <view class="song _ba54186" data-id="{{item.id}}" data-key="freeDetail" bindtap="more">
+              <view class="left _ba54186">
+                <text class="rank _ba54186">{{ind+1}}</text>
+                <text class="name _ba54186">{{item.title}}</text>
+                <view class="dur _ba54186">{{item.duration_sum}}</view>
+              </view> 
+              <view class="free-icon _ba54186" wx:if="{{item.tp==0&&!payed}}">免费试学</view>
+              <view class="free-icon _ba54186" wx:if="{{item.tp==1&&!payed&&item.is_flag==0}}">限时免费</view>
+              <view class="icon _ba54186" wx:if="{{item.tp==2&&!payed}}">
+                <image src="../../images/lock.png" class="_ba54186"/>
+              </view>
+            </view>
+          </navigator>
+        </view>
+        <view class="togglesong _ba54186" wx:if="{{single}}" bindtap="toggleSong">
+          <image src="../../images/top.png" class="top bottom _ba54186"/>
+          展开剩余的课时
+        </view>
+        <view class="togglesong _ba54186" wx:if="{{!single&&!chapter_name[index]}}" bindtap="toggleSong">
+          <image src="../../images/top.png" class="top _ba54186"/>
+          收起
+        </view> 
+      </view>
+    </view>
+    <view class="pay-option _ba54186" wx:if="{{!payed}}">
+      <view class="ope-wrap _ba54186">
+        <view class="ope _ba54186">
+          <view class="likes {{courseData.is_collection?'hightlight':''}} _ba54186" catchtap="collect" data-param="courseData" data-id="{{courseData.id}}" data-ind="{{index}}" data-collect="{{courseData.is_collection}}">
+            <image src="../../images/like1.png" wx:if="{{!courseData.is_collection}}" class="_ba54186"/>
+            <image src="../../images/liked1.png" wx:else class="_ba54186"/>
+            <text wx:if="{{!courseData.is_collection}}" class="_ba54186">感兴趣</text>
+            <text wx:else class="_ba54186">已感兴趣</text>
+          </view>
+          <navigator url="./freeDetail?id={{lessonList[0][0].id}}" hover-class="none" class="_ba54186">
+            <image src="../../images/book.png" class="_ba54186"/>
+            <text class="_ba54186">免费学习</text>
+          </navigator>
+        </view>
+      </view>
+      <view class="share-wrap _ba54186">
+        <view class="share _ba54186">
+          分享朋友
+          <button class="share-btn _ba54186" bindtap="share" open-type="share">分享朋友</button>
+        </view>
+      </view>
+      <view class="pay-wrap _ba54186">
+        <view class="pay _ba54186" bindtap="pay">立即付款</view>
+      </view>
+    </view>
+    <view class="block _ba54186"/>
+    
+  <import src="../plugins/wxParse/wxParse.wxml" class="_ba54186"/>
+  <block  wx:for="{{$htmlParser$htmlParserTpl.nodes}}" wx:key="{{index}}">
+    <template is="wxParse0" data="{{item}}"/>
+  </block>
+
+    <view class="{{payed?'':'payed_bottom'}} _ba54186"/>
+  </view>

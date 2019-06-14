@@ -1,0 +1,37 @@
+.login-box._e92af3e {
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6); }
+  .login-box .modal-box._e92af3e {
+    border-radius: 5rpx;
+    overflow: hidden;
+    text-align: center;
+    background: #FFF;
+    width: 600rpx; }
+    .login-box .modal-box .login-content._e92af3e {
+      padding: 30rpx;
+      font-size: 36rpx; }
+      .login-box .modal-box .login-content .login-cont._e92af3e {
+        color: #999;
+        font-size: 28rpx;
+        margin-top: 10rpx; }
+    .login-box .modal-box .login-btns._e92af3e {
+      display: flex;
+      border-top: 1rpx solid #E8E8E8; }
+      .login-box .modal-box .login-btns .login-btn._e92af3e {
+        height: 88rpx;
+        line-height: 88rpx;
+        border-radius: 0;
+        border: 0;
+        flex: 1;
+        font-size: 32rpx;
+        color: #51AF51; }
+        .login-box .modal-box .login-btns .login-btn._e92af3e:first-child {
+          border-right: 1rpx solid #E8E8E8; }

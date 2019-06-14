@@ -1,0 +1,277 @@
+<template>
+  <view class='container'>
+    <div class="top-option">
+      <navigator url='./citySelect'>
+        <wxc-button plain="{{true}}" size="normal" type="success">{{cityName?cityName:'定位/城市选择'}}</wxc-button>
+      </navigator>
+      <navigator url='./addKtv'>
+        <wxc-button plain="{{true}}" size="normal" type="success" value="新增ktv"></wxc-button>
+      </navigator>
+    </div>
+    <picker bind:change="bindPickerChange" index='index' value="{{index}}" range="{{selectArray}}">
+      <view class="common-wrap">
+        <!-- <view class="label">
+          ktv类型：
+        </view> -->
+        <view class="text">
+          {{selectArray[index]}}
+          <wxc-icon class="icon" size="20" type="arrow-down"></wxc-icon>
+        </view>
+      </view>
+    </picker>
+    <view class='search'>
+      <wxc-input type="text"
+        icon="search"
+        value='{{ktvName}}'
+        placeholder="请输入ktv名称"
+        bind:input="onInput">
+      </wxc-input>
+      <view class="common-btn">
+        <wxc-button size="small" type="success" value="搜索" bind:click='search'></wxc-button>
+      </view>
+    </view>
+    <scroll-view>
+      <view class='list-wrap'>
+        <repeat for="{{ktvList}}" key="index" index="index" item="item">
+          <navigator url='./ktvDetail?id={{item.id}}'>
+            <view class='list-item'>
+              <view class='list-des'>
+                <image class="list-image" mode="aspectFill" src="{{item.head_img?item.head_img:''}}"></image>
+                <view class='item'>
+                  <view class='title'>{{item.name}}</view>
+                  <p>{{item.description?item.description:''}}</p>
+                  <wxc-icon class='icon' size="30" type="arrow-right"></wxc-icon>
+                </view>
+              </view>
+              <view class="list-detail">
+                <view class='left'>
+                  <wxc-rate readonly='{{true}}' size='30' value="{{obj.score?obj.score:5}}" count="5" class="rate"></wxc-rate>
+                  <span>{{item.distance_me/1000}}km</span>
+                </view>
+                <view class="common-btn" catchtap='jump({{item.id}})'>
+                  <wxc-button plain="{{true}}" size="small" type="success" value="去评价"></wxc-button>
+                </view>
+              </view>
+            </view>
+          </navigator>
+        </repeat>
+      </view>
+    </scroll-view>
+    <view class="load-finish" wx:if='{{loadFinish}}'>我是有底线的~~~</view>
+    <!-- <LoginBox :shown.sync="showLoginBox"></LoginBox> -->
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import { Apis, Http, Utils } from 'libs/interface'
+
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: 'ktv列表',
+    usingComponents: {
+      'wxc-input': '../../packages/@minui/wxc-input/dist/index',
+      'wxc-button': '../../packages/@minui/wxc-button/dist/index',
+      'wxc-list': '../../packages/@minui/wxc-list/dist/index',
+      'wxc-rate': '../../packages/@minui/wxc-rate/dist/index',
+      'wxc-icon': '../../packages/@minui/wxc-icon/dist/index'
+    },
+    onReachBottomDistance: 0
+  }
+  data = {
+    index: 0,
+    selectArray: ['按距离排序', '按评分排序', '综合排序'],
+    showLoginBox: true,
+    ktvName: '',
+    cityName: '',
+    page: 1,
+    ktvList: [],
+    loadFinish: false,
+    lng: '',
+    lat: ''
+  }
+  onLoad (option) {
+    this.city = option.city ? JSON.parse(option.city) : ''
+    this.cityName = this.city.name
+    wx.getLocation({
+      type: 'wgs84',
+      success: (res) => {
+        this.lat = res.latitude
+        this.lng = res.longitude
+        this.$apply()
+        this.getList()
+      }
+    })
+  }
+  methods = {
+    bindPickerChange (e) {
+      this.ktvList = []
+      this.index = e.detail.value
+      this.$apply()
+      this.getList()
+    },
+    search () {
+      this.page = 1
+      this.ktvList = []
+      this.$apply()
+      this.getList()
+    },
+    onInput (e) {
+      this.ktvName = e.detail.value
+      this.$apply()
+    },
+    onReachBottom () {
+      this.$apply()
+      this.page = ++this.page
+      this.getList()
+    },
+    jump (id) {
+      wx.navigateTo({
+        url: './judge?id=' + id
+      })
+    }
+  }
+  getList () {
+    Utils.debounce(async () => {
+      let arr = []
+      let data = {
+        page: this.page,
+        type: this.index * 1 + 1,
+        lat: this.lat,
+        lng: this.lng
+      }
+      if (this.cityName) {
+        data.city = this.cityName
+      }
+      if (this.ktvName) {
+        data.name = this.ktvName
+      }
+      let ktvList = await Http.get({
+        url: Apis.url + Apis.ktvList,
+        data: data
+      })
+      if (ktvList.data.length) {
+        arr = [...this.ktvList, ...ktvList.data]
+        this.ktvList = arr
+        this.loadFinish = false
+        this.$apply()
+      } else {
+        this.page = --this.page
+        this.loadFinish = true
+      }
+    })
+  }
+}
+</script>
+<style lang="scss" scoped>
+.common-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 30rpx 36rpx 0;
+  border-top: 1px solid #f3f3f3;
+  margin-top: 30rpx;
+  .label {
+    min-width: 163rpx;
+    height: 46rpx;
+    line-height: 46rpx;
+    color: #777;
+    font-size: 28rpx;
+  }
+  .text {
+    font-size: 28rpx;
+    .icon {
+      position: absolute;
+      right: 36rpx;
+      top: 30rpx;
+    }
+  }
+}
+.top-option {
+  display: flex;
+  justify-content: space-between;
+  padding: 10rpx 30rpx;
+}
+.search {
+  display: flex;
+  display: flex;
+  height: 94rpx;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #f2f2f2;
+  border-bottom: 1px solid #f2f2f2;
+  margin: 30rpx 0;
+  .common-btn {
+    height: 94rpx;
+    display: flex;
+    align-items: center;
+    margin-right: 36rpx;
+  }
+}
+.list-wrap {
+  width: 100%;
+  background: #efefef;
+  padding-bottom: 10rpx;
+  padding-top: 10rpx;
+  .list-item {
+    background: #fff;
+    margin: 10rpx 0;
+    padding: 20rpx 0 20rpx 20rpx;
+  }
+  .list-des {
+    display: flex;
+    align-items: center;
+    position: relative;
+    image {
+      width: 200rpx;
+      height: 140rpx;
+      background: #f5f5f5;
+    }
+    .item {
+      flex: 1;
+      height: 140rpx;
+      margin-left: 20rpx;
+      padding-right: 80rpx;
+      p {
+        font-size: 14px;
+        color: #666;
+        text-overflow: -o-ellipsis-lastline;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        margin-top: 5rpx;
+      }
+    }
+    .title {
+      width: 430rpx;
+      font-size: 16px;
+      padding-top: 10rpx;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap
+    }
+    .icon {
+      position: absolute;
+      right: 36rpx;
+      top: 40rpx;
+    }
+  }
+  .list-detail {
+    padding-right: 36rpx;
+    margin-top: 10rpx;
+    display: flex;
+    justify-content: space-between;
+    .left {
+      display: flex;
+      align-items: center;
+      span {
+        font-size: 12px;
+        color: #333;
+      }
+    }
+  }
+}
+</style>

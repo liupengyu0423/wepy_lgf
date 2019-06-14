@@ -1,0 +1,127 @@
+
+  <view class="play-detail container _d5198ad"  wx:if="{{coursesData}}">
+    <view class="img-wrap _d5198ad">
+      <view class="unload _d5198ad"><image src="../../images/error.png" class="_d5198ad"/></view>
+      <image src="../../images/play_icon.png" class="play_icon _d5198ad" bindtap="playVideo" wx:if="{{!videoShow&&(payed||freeDetail.tp==1||lessonList[0].is_display==1)}}"/>
+      <image src="{{freeDetail.cover}}" wx:if="{{!videoShow}}" class="_d5198ad"/>
+      <video src="{{video_url}}" autoplay="{{videoShow}}" wx:if="{{videoShow}}" class="_d5198ad"/>
+      <navigator url="./coursesDetail?id={{course_id}}" hover-class="none" class="_d5198ad">
+        <view class="lock _d5198ad" wx:if="{{!videoShow&&!payed&&freeDetail.tp!=1&&!lessonList[0].is_display}}">立即购买课程</view>
+      </navigator>
+    </view>
+    <view class="course-des detail-des _d5198ad">
+      <view class="course-title _d5198ad">
+        <view class="com-tit com-tit-detail _d5198ad">
+          {{freeDetail.title}}
+        </view>
+      </view>
+      <view class="com-des _d5198ad">{{course.title}}</view>
+      <view class="learn _d5198ad">
+        <view class="people _d5198ad">共有{{freeDetail.play_count||0}}人学过</view>
+        <view class="follow {{freeDetail.is_collection?'hightlight':''}} _d5198ad" catchtap="collect" data-tp="1" data-param="freeDetail" data-id="{{freeDetail.id}}" data-ind="{{index}}" data-collect="{{freeDetail.is_collection}}">
+          <image src="../../images/follow.png" wx:if="{{!freeDetail.is_collection}}" class="_d5198ad"/>
+          <image src="../../images/followed.png" wx:else class="_d5198ad"/>
+          <text class="_d5198ad">{{freeDetail.fake_count}}</text>
+        </view>
+      </view>
+      <view class="tag _d5198ad" wx:if="{{freeDetail.tp==1}}">
+        <view class="free _d5198ad">限时免费</view>
+        <view class="date _d5198ad">{{date}}</view>
+      </view>
+    </view>
+    <view wx:if="{{lessonList.length>1}}" class="_d5198ad">
+      <view class="block _d5198ad"/>
+      <view class="common-tit _d5198ad">
+        <view class="tit _d5198ad">选集</view>
+      </view>
+      <view class="select _d5198ad">
+        <scroll-view scroll-x class="scroll-view _d5198ad">
+          <view wx:for="{{lessonList}}" wx:for-item="obj" wx:key="{{obj.id}}" wx:for-index="ind" data-ind="{{ind}}" data-id="{{obj.id}}" class="select-option {{videoInd==ind&&obj.is_display?'selected':''}} _d5198ad" data-isplay="{{obj.is_display}}" bindtap="changeVideo">
+            <view class="option-img _d5198ad">
+              <view class="mask _d5198ad" wx:if="{{!obj.is_display}}"/>
+              <view class="unload _d5198ad"><image src="../../images/error.png" class="_d5198ad"/></view>
+              <image src="../../images/locked.png" class="locked _d5198ad" wx:if="{{!obj.is_display}}"/>
+              <image src="{{obj.poster_url}}" class="_d5198ad"/>
+            </view>
+            <view class="title _d5198ad">{{obj.title}}</view>
+            <view class="option-tag _d5198ad" wx:if="{{videoInd==ind&&obj.is_display}}">
+              <image src="../../images/playing.png" class="_d5198ad"/>
+              <text class="_d5198ad">正在播放</text>
+            </view>
+            <view class="option-tag _d5198ad" wx:else>
+              <image src="../../images/play.png" class="_d5198ad"/>
+              <text class="_d5198ad">{{obj.play_count?obj.play_count:0}}</text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+    <view class="block _d5198ad"/>
+    <view class="common-tit _d5198ad">
+      <view class="tit _d5198ad">课程其他课时</view> 
+      <navigator url="./coursesDetail?id={{course_id}}" hover-class="none" class="_d5198ad">
+        <view class="more _d5198ad">查看完整课程<image src="../../images/next.png" class="_d5198ad"/></view>
+      </navigator>
+    </view>
+    <view class="free _d5198ad">
+      <view class="free-list _d5198ad">
+        <view class="free-wrap _d5198ad" wx:for="{{otherList}}" wx:for-item="obj" wx:key="{{obj.id}}" wx:index="index">
+          <navigator url="./freeDetail?id={{obj.id}}" hover-class="none" class="_d5198ad">
+            <view class="free-img _d5198ad">
+              <view class="unload _d5198ad"><image src="../../images/error.png" class="_d5198ad"/></view>
+              <image src="{{obj.cover}}" class="_d5198ad"/>
+            </view>
+            <view class="free-des _d5198ad">
+              <view class="top _d5198ad">
+                <view class="title com-tit _d5198ad">{{obj.title}}</view>
+                <view class="com-des _d5198ad">{{obj.describe}}</view>
+              </view>
+              <view class="operate _d5198ad">
+                <view class="follow {{obj.is_collection?'hightlight':''}} _d5198ad" catchtap="collect" data-tp="1" data-param="otherList" data-id="{{obj.id}}" data-ind="{{index}}" data-collect="{{obj.is_collection}}">
+                  <image src="../../images/follow.png" wx:if="{{!obj.is_collection}}" class="_d5198ad"/>
+                  <image src="../../images/followed.png" wx:else class="_d5198ad"/>
+                  <text class="_d5198ad">{{obj.fake_count}}</text>
+                </view>
+              </view>
+            </view>
+          </navigator>
+        </view>
+      </view>
+    </view>
+    <view class="block _d5198ad"/>
+    <view class="courses _d5198ad">
+      <view class="common-tit _d5198ad">
+        <view class="tit _d5198ad">精选课程</view> 
+        <navigator url="./specialCourse" hover-class="none" class="_d5198ad">
+          <view class="more _d5198ad" data-key="specialCourse" bindtap="more">查看更多<image src="../../images/next.png" class="_d5198ad"/></view>
+        </navigator>
+      </view>
+      
+  <view class="course-list detail-course {{$DetailCourse$iphonex}} _cacb935 _d5198ad">
+    <scroll-view class="scroll-view _cacb935" scroll-x style="width: auto;overflow:hidden;">
+      <view class="course-wrap _cacb935"  wx:for="{{$DetailCourse$coursesData}}" wx:for-item="obj" wx:for-index="index" wx:key="{{obj.id}}">
+        <navigator url="./coursesDetail?id={{obj.id}}" hover-class="none" class="_cacb935">
+          <view class="course-img _cacb935">
+            <view class="unload _cacb935"><image src="../../images/error.png" class="_cacb935"/></view>
+            <image src="{{obj.cover}}" class="_cacb935"/>
+          </view>
+          <view class="course-des _cacb935">
+            <view class="course-title _cacb935">
+              <view class="left com-tit _cacb935">
+                <image src="../../images/hot.png" class="_cacb935"/>
+                {{obj.title}}
+              </view>
+            </view>
+            <view class="like {{obj.is_collection?'hightlight':''}} _cacb935" catchtap="$DetailCourse$collect" data-param="coursesData" data-id="{{obj.id}}" data-ind="{{index}}" data-collect="{{obj.is_collection}}">
+              <image src="../../images/like.png" wx:if="{{!obj.is_collection}}" class="_cacb935"/>
+              <image src="../../images/liked.png" wx:else class="_cacb935"/>
+              <text class="_cacb935">{{obj.fake_count}}</text>
+            </view>
+          </view>
+        </navigator>
+      </view>
+    </scroll-view>
+  </view>
+      <!-- <template is='detail-course' data='{{coursesData,iphonex}}'></template> -->
+    </view>
+  </view>

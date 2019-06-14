@@ -1,0 +1,32 @@
+
+  <view class="container _2e82a08">
+    <view class="user container _2e82a08">
+      <image src="../../images/my_bg.png" class="bg _2e82a08"/>
+      <view class="avatar _2e82a08">
+        <image src="../../images/default.png" class="default _2e82a08"/>
+        <image src="{{userInfo.avatarUrl}}" class="now _2e82a08"/>
+      </view>
+      <view class="nickname _2e82a08">{{userInfo.nickName}}</view>
+    </view>
+    <view class="user-option _2e82a08">
+      <navigator url="./myCourse?key=course" hover-class="none" class="_2e82a08">
+        <view class="my-course _2e82a08">
+          <image src="../../images/my_icon1.png" class="_2e82a08"/>
+          <text class="_2e82a08">已购买的课程</text>
+        </view>
+      </navigator>
+      <navigator url="./myCourse?key=follow" hover-class="none" class="_2e82a08">
+        <view class="my-follow _2e82a08">
+          <image src="../../images/my_icon2.png" class="_2e82a08"/>
+          <text class="_2e82a08">感兴趣的课程</text>
+        </view>
+      </navigator>
+      <navigator url="./myCourse?key=collect" hover-class="none" class="_2e82a08">
+        <view class="my-collect _2e82a08">
+          <image src="../../images/my_icon3.png" class="_2e82a08"/>
+          <text class="_2e82a08">已收藏的课时</text>
+        </view>
+      </navigator>
+    </view>
+    <view class="tabShadow _2e82a08"/>
+  </view>

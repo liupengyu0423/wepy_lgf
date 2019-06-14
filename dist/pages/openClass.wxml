@@ -1,0 +1,52 @@
+
+  <view class="course_list container _983e8e2">
+    <view  wx:for="{{listData}}" wx:for-item="item" wx:for-index="ind" wx:key="{{ind}}" class="course_block {{(ind==days-1)?'margin_none':''}} _983e8e2">
+      <view class="block_des _983e8e2">
+        <view class="date _983e8e2">{{item.date}}</view>
+        <view class="week _983e8e2">
+          <text class="today _983e8e2" wx:if="{{ind==0}}">Today</text>
+          <text class="week_day _983e8e2" wx:else>星期{{item.week}}</text>
+        </view>
+        <view class="block_cont _983e8e2">
+          <text class="cont_week block_text _983e8e2" wx:if="{{ind==0}}">星期{{item.week}} | </text>
+          <text class="block_text _983e8e2">3 篇内容，</text>
+          <text class="block_text _983e8e2">约 {{item.minutes}} 分钟</text>
+        </view>
+      </view>
+      <view wx:for="{{item.arr}}" wx:for-item="obj" wx:key="{{obj.id}}" wx:for-index="index" class="course_day openC-wrap {{index==2?'last':''}} _983e8e2">
+        <navigator url="../ocDetail/ocDetail?id={{obj.id}}&offset={{days * 3-(ind*3+index)-2}}" class="link _983e8e2" hover-class="none">
+          <view class="cover_img _983e8e2">
+            <view class="unload _983e8e2"><image src="../../images/error.png" class="_983e8e2"/></view>
+            <image src="../../images/new.png" class="new _983e8e2" wx:if="{{ind==0}}"/>
+            <image src="{{obj.cover}}" class="_983e8e2"/>
+            <view class="video_duration _983e8e2">{{obj.duration}}</view>
+          </view>
+          <view class="des-wrap _983e8e2">
+            <view class="com-tit _983e8e2">{{obj.title}}</view>
+            <view class="com-des _983e8e2">{{obj.describe}}</view>
+            <view class="learn _983e8e2">
+              <view class="people _983e8e2">共有{{obj.play_count||0}}人学过</view>
+              <view class="follow {{obj.is_collection?'hightlight':''}} _983e8e2" catchtap="collect" data-tp="1" data-param="listData" data-id="{{obj.id}}" data-ind="{{ind}}" data-index="{{index}}" data-collect="{{obj.is_collection}}">
+                <image src="../../images/follow.png" wx:if="{{!obj.is_collection}}" class="_983e8e2"/>
+                <image src="../../images/followed.png" wx:else class="_983e8e2"/>
+                <text class="_983e8e2">{{obj.fake_count}}</text>
+              </view>
+            </view>
+          </view>
+        </navigator>
+      </view>
+      <view class="insert_pic _983e8e2">
+        <image src="{{famous[ind%30].imgSrc}}" class="famous_img _983e8e2"/>
+        <view class="famous_motto _983e8e2">
+          <view class="famous_saying _983e8e2">
+            <view wx:for="{{famous[ind%30].sentence}}" wx:for-index="index" wx:key="{{ind}}" class="_983e8e2">{{item}}</view>
+          </view>
+          <view class="famous_author _983e8e2">{{famous[ind%30].author}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="loading _983e8e2"  wx:if="{{loadingShow}}">
+      到底了，明天会有更多干货哦~
+      <image src="../../images/smile.png" class="smile _983e8e2"/>
+    </view>
+  </view>

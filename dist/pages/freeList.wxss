@@ -1,0 +1,19 @@
+.free-detail .common-wrap._2cb060c {
+  padding-bottom: 44rpx; }
+
+.free-detail .com-tit._2cb060c {
+  padding: 22rpx 0 20rpx; }
+
+.free-detail .learn._2cb060c {
+  padding: 20rpx 0 24rpx; }
+
+.price._2cb060c {
+  display: flex;
+  align-items: center; }
+  .price .tag._2cb060c {
+    margin: 0;
+    position: relative;
+    top: 4rpx; }
+
+.curprice._2cb060c {
+  margin-right: 24rpx; }

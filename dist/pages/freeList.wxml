@@ -1,0 +1,34 @@
+
+  <view class="container _2cb060c"  wx:if="{{freeData}}">
+    <view class="free-detail container _2cb060c">
+      <view class="common-wrap _2cb060c" wx:for="{{freeData}}" wx:for-item="obj" wx:for-index="index" wx:key="{{obj.id}}" data-key="freeDetail" data-id="{{obj.id}}" bindtap="more">
+        <view class="image-wrap _2cb060c">
+          <image src="../../images/new.png" class="new _2cb060c" wx:if="{{obj.days<=3}}"/>
+          <view class="unload _2cb060c"><image src="../../images/error.png" class="_2cb060c"/></view>
+          <image src="{{obj.cover}}" class="_2cb060c"/>
+        </view>
+        <view class="des-wrap _2cb060c">
+          <view class="com-tit _2cb060c">{{obj.title}}</view>
+          <view class="com-des _2cb060c">{{obj.from}}</view>
+          <view class="learn _2cb060c">
+            <view class="people _2cb060c">共有{{obj.play_count||0}}人学过</view>
+            <view class="follow {{obj.is_collection?'hightlight':''}} _2cb060c" catchtap="collect" data-tp="1" data-param="freeData" data-id="{{obj.id}}" data-ind="{{index}}" data-collect="{{obj.is_collection}}">
+              <image src="../../images/follow.png" wx:if="{{!obj.is_collection}}" class="_2cb060c"/>
+              <image src="../../images/followed.png" wx:else class="_2cb060c"/>
+              <text class="_2cb060c">{{obj.fake_count||0}}</text>
+            </view>
+          </view>
+          <view class="price _2cb060c">
+            <text class="curprice _2cb060c">￥<text class="big _2cb060c">0</text>.00</text>
+            <view class="tag _2cb060c">
+              <view class="date _2cb060c">{{obj.date}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="load-more loading _2cb060c" id="load-more" animation="{{animationData}}">
+      END
+      <image src="../../images/smile.png" class="smile _2cb060c"/>
+    </view>
+  </view>

@@ -1,0 +1,276 @@
+<template>
+  <view class='container'>
+    <view class="form-wrap">
+      <view class='required'>
+        <wxc-input type="text" bind:input='onInput' data-type='name' title="ktv名称：" placeholder="请输入ktv名称"></wxc-input>
+      </view>
+      <picker bindchange="bindTypeChange" index='index' value="{{index}}" range="{{typeArray}}" class='required'>
+        <view class="common-wrap">
+          <view class="label">
+            ktv类型：
+          </view>
+          <view class="text">
+            {{typeArray[index]}}
+            <wxc-icon class="icon" size="20" type="arrow-down"></wxc-icon>
+          </view>
+        </view>
+      </picker>
+      <picker bindchange="bindRegionChange" value="{{region}}" mode='region' class='required'>
+        <view class="common-wrap">
+          <view class="label">
+            省市区：
+          </view>
+          <view class="text">
+            {{region[0]}}-{{region[1]}}-{{region[2]}}
+            <wxc-icon class="icon" size="20" type="arrow-down"></wxc-icon>
+          </view>
+        </view>
+      </picker>
+      <view class='required'>
+        <wxc-input type="text" bind:input='onInput' data-type='addr' title="详细地址：" placeholder="请输入详细地址"></wxc-input>
+      </view>
+      <view class="common-wrap">
+        <view class="label">
+          定位位置：
+        </view>
+        <map
+        longitude="{{lng}}"
+        latitude="{{lat}}"
+        id="myMap"
+        markers="{{markers}}"
+        bindregionchange='bindMapChange'
+        show-location='{{true}}' />
+      </view>
+      <picker bindchange="bindDateChange" value="{{dateValue}}" mode = 'date'>
+        <view class="common-wrap">
+          <view class="label">
+            开业时间：
+          </view>
+          <view class="text">
+            {{dateValue}}
+            <wxc-icon class="icon" size="20" type="arrow-down"></wxc-icon>
+          </view>
+        </view>
+      </picker>
+      <wxc-input type="text" bind:input='onInput' data-type='room_count' title="包房总数量：" placeholder="请输入包房总数量"></wxc-input>
+      <wxc-input type="text" bind:input='onInput' data-type='room_b' title="大包数量：" placeholder="请输入大包数量"></wxc-input>
+      <wxc-input type="text" bind:input='onInput' data-type='room_m' title="中包数量：" placeholder="请输入中包数量"></wxc-input>
+      <wxc-input type="text" bind:input='onInput' data-type='room_s' title="小包数量：" placeholder="请输入小包数量"></wxc-input>
+      <view class="common-wrap">
+        <view class="label">
+          备注：
+          <span>*</span>
+        </view>
+        <textarea value='{{description}}' bindblur='bindTextAreaBlur' data-type='description' cols="30" rows="5"></textarea>
+      </view>
+    </view>
+    <view class="common-wrap upload">
+      <view class="label">上传照片</view>
+      <Upload></Upload>
+    </view>
+    <view class="common-btn">
+      <wxc-button size="normal" type="success" value="提交" bind:click='submit'></wxc-button>
+    </view>
+    <wxc-toast is-show="{{toastShow}}">请填写完整</wxc-toast>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import { Utils, Apis, Http } from 'libs/interface'
+import Upload from 'components/upload'
+
+export default class AddKtv extends wepy.page {
+  config = {
+    navigationBarTitleText: '新增ktv',
+    usingComponents: {
+      'wxc-input': '../../packages/@minui/wxc-input/dist/index',
+      'wxc-icon': '../../packages/@minui/wxc-icon/dist/index',
+      'wxc-button': '../../packages/@minui/wxc-button/dist/index',
+      'wxc-toast': '../../packages/@minui/wxc-toast/dist/index'
+    }
+  }
+  data = {
+    mapContext: null,
+    markers: [{
+      width: 20,
+      height: 30,
+      id: 0
+    }],
+    toastShow: false,
+    typeArray: ['量贩式', '夜总会', '混合', '其他'],
+    index: 0,
+    region: ['北京市', '北京市', '东城区'],
+    dateValue: '',
+    name: '', // ktv名称  String
+    type: '', // ktv 类型:量贩、夜总会、综合、其它   String
+    province: '北京市', // 省   int
+    city: '北京市', // 市  int
+    district: '东城区', // 区  int
+    pcode: '110000',
+    addr: '', // 详细地址   String
+    lat: '', // 经度 double
+    lng: '', // 维度  double
+    openTime: '', // 开业时间  ??
+    room_count: '',  // 包房总数  int
+    room_b: '', // 大包数量 int
+    room_m: '', // 中包数量  int
+    room_s: '', // 小包数量  int
+    description: '', // 备注   String
+    imgArray: []  // 图片数组  [String]
+  }
+  components = {
+    Upload
+  }
+  onLoad() {
+    this.dateValue = Utils.getTime(new Date())
+    this.mapContext = wx.createMapContext('myMap', this)
+    wx.getLocation({
+      type: 'wgs84',
+      success: (res) => {
+        this.lat = res.latitude
+        this.lng = res.longitude
+        this.markers[0].latitude = res.latitude
+        this.markers[0].longitude = res.longitude
+        this.$apply()
+      }
+    })
+  }
+  events = {
+    getImgs (arr) {
+      this.imgArray = arr
+    }
+  }
+  methods = {
+    bindMapChange () {
+      this.mapContext.getCenterLocation({
+        success: (res) => {
+          this.markers[0].latitude = res.latitude
+          this.markers[0].longitude = res.longitude
+        }
+      })
+    },
+    bindTypeChange (e) {
+      console.log(e)
+      const type = e.detail.value
+      this.index = type
+    },
+    bindRegionChange (e) {
+      const value = e.detail.value
+      this.region = e.detail.value
+      this.pcode = e.detail.code[0]
+      this.province = value[0]
+      this.city = value[1]
+      this.district = value[2]
+    },
+    bindDateChange (e) {
+      this.dateValue = e.detail.value
+    },
+    bindTextAreaBlur (e) {
+      this.description = e.detail.value
+    },
+    onInput (e) {
+      const type = e.currentTarget.dataset.type || e.target.dataset.type
+      this[type] = e.detail.value
+      this.$apply()
+    },
+    async submit () {
+      if (!this.name || !this.city || !this.province || !this.district || !this.addr) {
+        this.toastShow = true
+        setTimeout(() => {
+          this.toastShow = false
+          this.$apply()
+        }, 2000)
+        return
+      }
+      const openTime = new Date(this.dateValue).getTime()
+      const headImg = this.imgArray[0]
+      const imgs = this.imgArray.slice(1)
+      const tp = this.index * 1 + 1
+      let params = {
+        name: this.name, // ktv名称  String
+        tp: tp, // ktv 类型:量贩、夜总会、综合、其它   String
+        province: this.province, // 省   int
+        city: this.city, // 市  int
+        district: this.district, // 区  int
+        pcode: this.pcode, // 县六位编码如北京：110000
+        addr: this.addr, // 详细地址   String
+        lat: this.markers[0].latitude, // 经度 double
+        lng: this.markers[0].latitude, // 维度  double
+        openTime: openTime, // 开业时间  ??
+        room_count: this.room_count,  // 包房总数  int
+        room_b: this.room_b, // 大包数量 int
+        room_m: this.room_m, // 中包数量  int
+        room_s: this.room_s, // 小包数量  int
+        head_img: headImg, // 店铺头像，上传的第一张图片位店铺头像
+        imgs: imgs, // 图片列表,地址逗号分隔，不包含店铺头像
+        description: this.description // 备注   String
+      }
+      console.log(params)
+      await Http.get({
+        url: Apis.url + Apis.ktvAdd,
+        data: params
+      })
+      wx.reLaunch({
+        url: './index'
+      })
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+.common-wrap {
+  position:relative;
+  display:flex;
+  flex-flow:row nowrap;
+  align-items:center;
+  line-height:1.4;
+  padding:24rpx 30rpx;
+  box-sizing:border-box;
+  font-size:28rpx;
+  color:#333;
+  position: relative;
+  border-bottom: 1rpx solid #f3f3f3;
+  textarea {
+    border: 2px solid #f2f2f2;
+  }
+}
+.upload {
+  display: block;
+}
+.label {
+  min-width: 163rpx;
+  height: 46rpx;
+  line-height: 46rpx;
+  color: #333;
+  position: relative;
+  span {
+    position: absolute;
+    left: -15rpx;
+    top: 5rpx;
+    color: #f00;
+  }
+}
+.text {
+  .icon {
+    position: absolute;
+    right: 200rpx;
+    top: 23rpx;
+  }
+}
+.common-btn {
+  display: flex;
+  justify-content: center;
+  margin: 100rpx auto 200rpx;
+}
+.required {
+  position: relative;
+  &::after {
+    content: '*';
+    position: absolute;
+    left: 15rpx;
+    top: 30rpx;
+    color: #f00;
+  }
+}
+</style>

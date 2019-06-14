@@ -1,0 +1,55 @@
+.user .bg._2e82a08 {
+  height: 277rpx;
+  position: absolute;
+  top: 0;
+  right: 0; }
+
+.user .avatar._2e82a08 {
+  width: 214rpx;
+  height: 214rpx;
+  border-radius: 50%;
+  margin: 96rpx auto 32rpx;
+  position: relative; }
+  .user .avatar .default._2e82a08 {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1; }
+  .user .avatar .now._2e82a08 {
+    z-index: 999; }
+  .user .avatar image._2e82a08 {
+    border-radius: 50%;
+    box-shadow: 0 0 40px rgba(188, 3, 214, 0.42); }
+
+.user .nickname._2e82a08 {
+  height: 46rpx;
+  text-align: center;
+  font-size: 13pt;
+  color: #2d2427; }
+
+.user-option._2e82a08 {
+  width: 530rpx;
+  margin: 0 auto; }
+  .user-option view._2e82a08 {
+    display: flex;
+    height: 104rpx;
+    align-items: center; }
+  .user-option image._2e82a08 {
+    margin: 0; }
+  .user-option .my-course._2e82a08 {
+    border-bottom: 1px solid #f3f4f6; }
+    .user-option .my-course image._2e82a08 {
+      width: 36rpx;
+      height: 30rpx; }
+  .user-option .my-follow._2e82a08 {
+    border-bottom: 1px solid #f3f4f6; }
+    .user-option .my-follow image._2e82a08 {
+      width: 39rpx;
+      height: 33rpx; }
+  .user-option .my-collect image._2e82a08 {
+    width: 39rpx;
+    height: 36rpx; }
+  .user-option text._2e82a08 {
+    font-size: 11pt;
+    color: #6e6e6e;
+    margin-left: 30rpx; }

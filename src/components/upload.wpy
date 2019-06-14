@@ -1,0 +1,156 @@
+<template>
+  <view class="gallery">
+    <repeat for="{{images}}" key="" item="item" index="index">
+      <view class="item">
+        <image src="{{item}}" bindtap="previewImage" mode="aspectFill"></image>
+        <!-- 删除按钮 -->
+        <div class="delete" bindtap="delete({{index}})">
+          <wxc-icon class="icon" size="20" type="close"></wxc-icon>
+        </div>
+      </view>
+    </repeat>
+    <view class="item" bindtap="chooseImage" wx:if='{{images.length<6}}'>
+      <view class='addIcon'>+</view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import { Apis, Http } from 'libs/interface'
+var MD5 = require('../libs/md5.js')
+export default class Upload extends wepy.component {
+  config = {
+    usingComponents: {
+      'wxc-icon': '../../packages/@minui/wxc-icon/dist/index'
+    }
+  }
+  data = {
+    images: [],
+    imgsUrl: []
+  }
+  methods = {
+    chooseImage: function () {
+      let that = this
+      wx.chooseImage({
+        count: 6, // 默认9
+        sizeType: ['compressed'],
+        sourceType: ['album', 'camera'],
+        // 可以指定来源是相册还是相机，默认二者都有
+        success: async(res) => {
+          // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+          var tempFilePaths = res.tempFilePaths
+          tempFilePaths.forEach(element => {
+            wx.getFileSystemManager().readFile({
+              filePath: element, // 选择图片返回的相对路径
+              success: res => {
+                var spark = new MD5.ArrayBuffer()
+                spark.append(res.data)
+                var hexHash = spark.end(false)
+                that.getToken(hexHash, element)
+              }
+            })
+          })
+          this.images = this.images.concat(tempFilePaths)
+          this.$apply()
+        }
+      })
+    },
+    uploadFile (tempFilePaths, qnsign, that) {
+      wx.uploadFile({
+        url: 'https://up-z1.qiniup.com/',
+        filePath: tempFilePaths,
+        name: 'file',
+        formData: {
+          token: qnsign.token,
+          key: qnsign.file_name
+        },
+        header: {
+          'content-type': 'multipart/form-data'
+        },
+        success (res) {
+          that.$emit('getImgs', that.imgsUrl)
+        },
+        fail () {
+          wx.showModal({
+            title: '错误提示',
+            content: '上传图片失败',
+            showCancel: false,
+            success: function (res) {}
+          })
+        }
+      })
+    },
+    delete (index) {
+      this.images.splice(index, 1)
+      this.$emit('getImgs', this.images)
+    },
+    // 图片预览
+    previewImage: function (e) {
+      var current = e.target.dataset.src
+      wx.previewImage({
+        current: current,
+        urls: this.images
+      })
+    }
+  }
+  async getToken (hexHash, tempFilePaths) {
+    const name = hexHash + '.png'
+    let qnsign = await Http.get({
+      url: Apis.qnsign,
+      data: {
+        file_name: name
+      }
+    })
+    this.imgsUrl.push(qnsign.url)
+    this.methods.uploadFile(tempFilePaths, qnsign, this)
+  }
+}
+</script>
+<style lang="scss" scoped>
+
+.gallery {
+  margin: 10rpx auto 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+/*每张图片所占容器*/
+.item {    
+  position: relative;
+  margin-right: 25rpx;
+  margin-bottom: 40rpx;
+  width: 200rpx;
+  height: 200rpx;
+}
+.item image{
+  width: 100%;
+  height: 100%;
+}
+/*add按钮*/
+.item .addIcon{
+  position:relative;
+  width:200rpx;
+  height:200rpx;
+  text-align:center;
+  line-height:200rpx;
+  font-size:80rpx;
+  background: #f3f3f3;
+  color: #555;display:block;
+
+}
+/*删除按钮*/
+.delete {    
+  position:absolute;
+  right:-10rpx;
+  top:-10rpx;
+  /* background:#ccc; */
+  opacity:1;
+  width: 36rpx;
+  height: 36rpx;
+  line-height: 35rpx;
+  font-size:22rpx;
+  text-align: center;
+  font-weight:700;
+  border: 1px solid #333333;
+  border-radius: 50%;
+}
+</style>

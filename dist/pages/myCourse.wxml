@@ -1,0 +1,43 @@
+
+  <view class="myCourse container _411cb92">
+    <view class="free-list _411cb92"  wx:if="{{courseData}}">
+      <view class="free-wrap _411cb92" wx:for="{{courseData}}" wx:for-item="obj" wx:for-index="index" wx:key="{{obj.id}}" data-id="{{obj.id}}" data-key="{{(obj.tp==0&&!obj.start)?'ocDetail':pageKey}}" bindtap="more">
+        <view class="free-img _411cb92">
+          <view class="unload _411cb92"><image src="../../images/error.png" class="_411cb92"/></view>
+          <image src="{{obj.cover}}" class="_411cb92"/>
+        </view>
+        <view class="free-des _411cb92">
+          <view class="top _411cb92">
+            <view class="title com-tit _411cb92">{{obj.title}}</view>
+            <view class="com-des _411cb92">{{obj.describe}}</view>
+          </view>
+          <view class="operate _411cb92">
+            <view class="follow hightlight _411cb92" data-tp="1" catchtap="collect" wx:if="{{tp==1}}" data-param="courseData" data-id="{{obj.id}}" data-ind="{{index}}" data-collect="{{obj.is_collection}}">
+              <image src="../../images/followed.png" class="_411cb92"/>
+              <text class="_411cb92">{{obj.fake_count}}</text>
+            </view>
+            <view class="like hightlight _411cb92" data-tp="0" catchtap="collect" wx:if="{{tp==0}}" data-param="courseData" data-id="{{obj.id}}" data-ind="{{index}}" data-collect="{{obj.is_collection}}">
+              <image src="../../images/liked.png" class="_411cb92"/>
+              <text class="_411cb92">{{obj.fake_count}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="loading _411cb92">{{loading}}</view>
+    </view>
+    <view class="empty _411cb92"  wx:if="{{courseData.length==0&&collectName=='课时'}}">
+      <image src="../../images/empty1.png" class="empty1 _411cb92"/>
+      <view class="_411cb92">这里空空的，您还没有收藏{{collectName}}</view>
+      <view class="_411cb92">赶紧让我丰富起来吧！</view>
+    </view>
+    <view class="empty _411cb92"  wx:if="{{courseData.length==0&&collectName=='课程'}}">
+      <image src="../../images/empty2.png" class="empty2 _411cb92"/>
+      <view class="_411cb92">您还没有对课程感兴趣，</view>
+      <view class="_411cb92">赶快去寻找感兴趣的课程吧！</view>
+    </view>
+    <view class="empty _411cb92" wx:if="{{(courseData.length==0)&&pageKey=='coursesDetail'&&!collectName}}">
+      <image src="../../images/empty3.png" class="empty3 _411cb92"/>
+      <view class="_411cb92">您还没有购买课程，</view>
+      <view class="_411cb92">先去免费试学一下吧！</view>
+    </view>
+  </view>

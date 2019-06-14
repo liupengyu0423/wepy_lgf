@@ -1,0 +1,335 @@
+<template>
+  <view class='container ktvDetail'>
+    <view class="ktv-info">
+      <view class="img-wrap">
+        <image mode="aspectFill" src="{{detail.head_img}}"></image>
+      </view>
+      <view class='right'>
+        <view class="title">{{detail.name}}</view>
+        <view class="info">
+          <view>{{typeArray[detail.tp]}}</view>
+          <view>{{detail.open_time?detail.open_time:'暂无'}}</view>
+        </view>
+        <div class="bottom-wrap">
+          <wxc-rate readonly='{{true}}' size='30' value="{{detail.score?detail.score:5}}" count="5"></wxc-rate>
+          <wxc-button plain="{{true}}" size="small" value="报错" bindtap="showDialog"></wxc-button>
+        </div>
+      </view>
+    </view>
+    <view class='addr'>地址：{{detail.addr?detail.addr:'暂无'}}</view>
+    <view class="map-wrap" wx:if='{{!showDialog&&(detail.lng!=0.000000||detail.lat!=0.000000)}}'>
+      <map
+        longitude="{{detail.lng}}"
+        latitude="{{detail.lat}}"
+        id="detailMap"
+        markers="{{markers}}"
+        bindregionchange='bindMapChange'
+        show-location='{{true}}'
+        enable-scroll='{{false}}'/>
+    </view>
+    <view class="rate-wrap">
+      <view class="sub-title">评论区</view>
+      <repeat for="{{comments}}" key="index" index="index" item="item">
+        <view class="rate-item">
+          <view class='title'>
+            <view class="judge">评分分值：{{item.score?item.score:5}}</view>
+            <view class="create-time">{{item.create_time}}</view>
+          </view>
+          <view class="content">{{item.description?item.description:'暂无评价'}}</view>
+          <view class="img-wrap">
+            <repeat for="{{item.imgs}}" key="index" index="index" item="img">
+              <image class="list-image" mode="aspectFill" src="{{img}}"></image>
+            </repeat>
+          </view>
+        </view>
+      </repeat>
+    </view>
+    <view class="load-finish" wx:if='{{loadFinish}}'>没有更多评价了~~~</view>
+    <view class="dialog" bindtap='closeDialog' wx:if='{{showDialog}}'>
+      <view class="form-wrap" catchtap='catch'>
+        <picker bindchange="bindTypeChange" index='index' value="{{index}}" range="{{errArray}}" class='input-wrap'>
+          <view class="common-wrap">
+            <view class="label">
+              ktv类型：
+            </view>
+            <view class="text">
+              {{errArray[errIndex]}}
+              <wxc-icon class="icon" size="20" type="arrow-down"></wxc-icon>
+            </view>
+          </view>
+        </picker>
+        <view class="input-wrap">
+          <wxc-input type="text" bind:input='onInput' data-type='else' title="其他:"></wxc-input>
+        </view>
+        <view class='btn-wrap'><wxc-button bindtap='sumbit'>提交</wxc-button></view>
+      </view>
+    </view>
+    <wxc-toast is-show="{{toastShow}}">{{toastText}}</wxc-toast>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import { Apis, Http, Utils } from 'libs/interface'
+
+export default class KtvDetail extends wepy.page {
+  config = {
+    navigationBarTitleText: 'ktv详情页',
+    usingComponents: {
+      'wxc-input': '../../packages/@minui/wxc-input/dist/index',
+      'wxc-button': '../../packages/@minui/wxc-button/dist/index',
+      'wxc-dialog': '../../packages/@minui/wxc-dialog/dist/index',
+      'wxc-rate': '../../packages/@minui/wxc-rate/dist/index',
+      'wxc-toast': '../../packages/@minui/wxc-toast/dist/index',
+      'wxc-icon': '../../packages/@minui/wxc-icon/dist/index'
+    },
+    onReachBottomDistance: 0
+  }
+  data = {
+    detail: {},
+    errIndex: 0,
+    typeArray: ['', '量贩式', '夜总会', '混合', '其他'],
+    errArray: ['量贩式', '夜总会', '混合', '其他'],
+    id: 0,
+    page: 1,
+    comments: [],
+    loadFinish: false,
+    lng: '',
+    lat: '',
+    markers: [{
+      width: 20,
+      height: 30,
+      id: 1
+    }],
+    showDialog: false,
+    else: '',
+    toastShow: false,
+    toastText: '提交成功'
+  }
+  onLoad (option) {
+    this.id = option.id
+    this.getDetail()
+    this.getComments()
+  }
+  methods = {
+    onReachBottom () {
+      this.$apply()
+      this.getComments()
+    },
+    showDialog() {
+      this.showDialog = true
+    },
+    closeDialog() {
+      this.showDialog = false
+    },
+    catch () {},
+    onInput (e) {
+      const type = e.currentTarget.dataset.type || e.target.dataset.type
+      this[type] = e.detail.value
+      this.$apply()
+    },
+    bindTypeChange (e) {
+      const type = e.detail.value
+      this.errIndex = type
+      console.log(type)
+    },
+    async sumbit () {
+      const params = {
+        ktv_id: this.id,
+        tp: this.errIndex * 1 + 1,
+        val: this.else
+      }
+      if (!this.else) {
+        params.val = this.errArray[this.errIndex]
+      }
+      const res = await Http.post({
+        url: Apis.url + Apis.submitErr,
+        data: params
+      })
+      this.toastShow = true
+      if (res.val !== 0) {
+        this.toastText = '提交成功'
+      } else {
+        this.toastText = '提交失败'
+      }
+      this.showDialog = false
+      setTimeout(() => {
+        this.toastShow = false
+        this.$apply()
+      }, 2000)
+      this.$apply()
+    }
+  }
+  async getDetail () {
+    let params = {
+      id: this.id
+    }
+    let ktvDetail = await Http.get({
+      url: Apis.url + Apis.ktvDetail,
+      data: params
+    })
+    this.detail = ktvDetail.data
+    this.markers[0].latitude = this.detail.lat
+    this.markers[0].longitude = this.detail.lng
+    this.$apply()
+  }
+  getComments () {
+    if (this.loadFinish) return
+    Utils.debounce(async () => {
+      let arr = this.comments
+      let params = {
+        ktv_id: this.id,
+        page: this.page
+      }
+      let ktvComments = await Http.get({
+        url: Apis.url + Apis.ktvComments,
+        data: params
+      })
+      let comments = ktvComments.data
+      if (comments.length) {
+        this.page = ++this.page
+        comments.forEach(element => {
+          if (element.imgs) {
+            element.imgs = JSON.parse(element.imgs)
+          }
+        })
+        this.comments = [...arr, ...comments]
+        this.loadFinish = false
+        this.$apply()
+      } else {
+        this.loadFinish = true
+        this.$apply()
+      }
+    })
+  }
+}
+</script>
+<style lang="scss" scoped>
+.ktv-info {
+  padding: 20rpx 40rpx 20rpx;
+  display: flex;
+  .img-wrap {
+    width: 200rpx;
+    height: 140rpx;
+    background: #f5f5f5;
+    image {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-left: 40rpx;
+    .info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+  }
+  .title {
+    font-size: 16px;
+    margin-bottom: 10rpx;
+  }
+}
+.bottom-wrap {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10rpx;
+}
+.addr {
+  font-size: 14px;
+  padding: 0 40rpx 40rpx;
+  color: rgb(177, 172, 172);
+}
+.map-wrap {
+  width: 700rpx;
+  margin: 0 auto 20rpx;
+  map {
+    width: 100%;
+  }
+}
+.sub-title {
+  font-size: 14px;
+  padding-left: 30rpx;
+  margin-bottom: 10rpx;
+}
+.rate-item {
+  padding: 20rpx 40rpx 40rpx;
+  border-top: 1px solid #f3f3f3;
+  .title {
+    display: flex;
+    justify-content: space-between;
+  }
+  .create-time {
+    font-size: 13px;
+    color: #999;
+  }
+  .judge, .content {
+    font-size: 14px;
+    margin-bottom: 20rpx;
+  }
+  .content {
+    color: #999;
+  }
+  .img-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    image {
+      width: 150rpx;
+      height: 150rpx;
+      margin-right: 15rpx;
+    }
+  }
+}
+.dialog {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.5);
+  .form-wrap {
+    width: 600rpx;
+    height: 300rpx;
+    background: #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -150rpx;
+    margin-left: -300rpx;
+    padding-top: 20rpx;
+  }
+  .common-wrap {
+    height: 94rpx;
+    display: flex;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    .icon {
+      position: absolute;
+      right: 100rpx;
+      top: 0rpx;
+    }
+  }
+  .label {
+    width: 163rpx;
+    height: 46rpx;
+    line-height: 94rpx;
+    color: #333;
+    font-size: 14px;
+    text-align: center;
+  }
+  .text {
+    font-size: 14px;
+    line-height: 94rpx;
+  }
+  .btn-wrap {
+    display: flex;
+    justify-content: center;
+    padding-top: 20rpx;
+  }
+}
+</style>

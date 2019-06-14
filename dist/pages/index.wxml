@@ -1,0 +1,192 @@
+
+  <view class="container _6d16f66" id="container">
+    <view class="banner _6d16f66">
+      <swiper autoplay="true" circular="true" indicator-dots="true" indicator-color="#494349" indicator-active-color="#e4cce6" interval="3000" duration="400" class="_6d16f66">
+        <swiper-item  wx:for="{{bannerData}}" wx:for-item="obj" wx:key="{{obj.weight}}" wx:index="index" class="_6d16f66">
+          <image src="{{obj.image_path}}" class="slide-image _6d16f66" bindtap="loadweb" data-wpyloadweb-a="{{obj.url}}"/>
+        </swiper-item>
+      </swiper>
+    </view>
+    <view class="item-nav _6d16f66">
+      <view class="item item1 _6d16f66">
+        <navigator url="./myCourse?key=course" hover-class="none" class="_6d16f66">
+          <view class="img-wrap _6d16f66">
+            <image src="../../images/index_icon1.png" class="_6d16f66"/>
+          </view>
+          <view class="txt _6d16f66">我的课程</view>
+        </navigator>
+      </view>
+      <view class="item item2 _6d16f66">
+        <navigator url="./specialCourse" hover-class="none" class="_6d16f66">
+          <view class="img-wrap _6d16f66">
+            <image src="../../images/index_icon2.png" class="_6d16f66"/>
+          </view>
+          <view class="txt _6d16f66">精选课程</view>
+        </navigator>
+      </view>
+      <view class="item item3 _6d16f66">
+        <navigator url="./openClass" hover-class="none" class="_6d16f66">
+          <view class="img-wrap _6d16f66">
+            <image src="../../images/index_icon3.png" class="_6d16f66"/>
+          </view>
+          <view class="txt _6d16f66">公开课</view>
+        </navigator>
+      </view>
+      <view class="item item4 _6d16f66">
+        <navigator url="./freeList" hover-class="none" class="_6d16f66">
+          <view class="img-wrap _6d16f66">
+            <image src="../../images/index_icon4.png" class="_6d16f66"/>
+          </view>
+          <view class="txt _6d16f66">限时免费</view>
+        </navigator>
+      </view>
+    </view>
+    <view class="block _6d16f66"/>
+    <view class="free _6d16f66">
+      <view class="common-tit _6d16f66">
+        <view class="tit _6d16f66">
+          <image src="../../images/com_tit1.png" class="_6d16f66"/>
+        </view> 
+        <navigator url="./freeList" hover-class="none" class="_6d16f66">
+          <view class="more _6d16f66">查看更多<image src="../../images/next.png" class="_6d16f66"/></view>
+        </navigator>
+      </view>
+      <view class="free-list _6d16f66">
+        <view class="free-wrap _6d16f66"  wx:for="{{freeData}}" wx:for-item="obj" wx:key="{{obj.id}}" wx:for-index="index" data-key="freeDetail" data-id="{{obj.id}}" bindtap="more">
+          <view class="free-img _6d16f66">
+            <image src="../../images/new.png" class="new _6d16f66" wx:if="{{obj.days<=3}}"/>
+            <view class="unload _6d16f66"><image src="../../images/error.png" class="_6d16f66"/></view>
+            <image src="{{obj.cover}}" style="border-radius:18rpx" class="_6d16f66"/>
+          </view>
+          <view class="free-des _6d16f66">
+            <view class="top _6d16f66">
+              <view class="title com-tit _6d16f66">{{obj.title}}</view>
+              <view class="com-des _6d16f66">{{obj.from}}</view>
+            </view>
+            <view class="operate _6d16f66">
+              <view class="price _6d16f66">
+                <text class="curprice _6d16f66">￥<text class="big _6d16f66">0</text>.00</text>
+              </view>
+              <view class="follow {{obj.is_collection?'hightlight':''}} _6d16f66" catchtap="collect" data-tp="1" data-param="freeData" data-id="{{obj.id}}" data-ind="{{index}}" data-collect="{{obj.is_collection}}">
+                <image src="../../images/follow.png" wx:if="{{!obj.is_collection}}" class="_6d16f66"/>
+                <image src="../../images/followed.png" wx:else class="_6d16f66"/>
+                <text class="_6d16f66">{{obj.fake_count}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="block _6d16f66"/>
+    <view class="courses _6d16f66">
+      <view class="common-tit _6d16f66">
+        <view class="tit _6d16f66">
+          <image src="../../images/com_tit2.png" class="_6d16f66"/>
+        </view>
+        <navigator url="./specialCourse" hover-class="none" class="_6d16f66">
+          <view class="more _6d16f66">查看更多<image src="../../images/next.png" class="_6d16f66"/></view>
+        </navigator>
+      </view>
+      
+  <view class="course-list _b8ada4e _6d16f66">
+    <view class="course-wrap _b8ada4e"  wx:for="{{$SpecialCourse$coursesData}}" wx:for-item="obj" wx:for-index="index" wx:key="{{obj.id}}">
+      <navigator url="./coursesDetail?id={{obj.id}}" hover-class="none" class="_b8ada4e">
+        <view class="course-img _b8ada4e">
+          <view class="unload _b8ada4e"><image src="../../images/error.png" class="_b8ada4e"/></view>
+          <image src="{{obj.cover}}" class="_b8ada4e"/>
+        </view>
+        <view class="course-des _b8ada4e">
+          <view class="course-title _b8ada4e">
+            <view class="left com-tit _b8ada4e">
+              <image src="../../images/hot.png" class="_b8ada4e"/>
+              {{obj.title}}
+            </view>
+            <view class="right _b8ada4e">{{obj.lesson_cnt}} 课时</view>
+          </view>
+          <view class="com-des _b8ada4e">{{obj.describe}}</view>
+          <view class="learn _b8ada4e">
+            <view class="people _b8ada4e">共有{{obj.play_count}}人学过</view>
+            <view class="like {{obj.is_collection?'hightlight':''}} _b8ada4e" catchtap="$SpecialCourse$collect" data-param="coursesData" data-id="{{obj.id}}" data-ind="{{index}}" data-collect="{{obj.is_collection}}">
+              <image src="../../images/like.png" wx:if="{{!obj.is_collection}}" class="_b8ada4e"/>
+              <image src="../../images/liked.png" wx:else class="_b8ada4e"/>
+              <text class="_b8ada4e">{{obj.fake_count}}</text>
+            </view>
+          </view>
+          <view class="price _b8ada4e">
+              <text class="curprice _b8ada4e">￥<text class="big _b8ada4e">{{obj.fee/100}}</text></text>
+              <text class="oldprice _b8ada4e">￥{{obj.origin_fee/100}}</text>
+            </view>
+        </view>
+        <view class="block-short _b8ada4e" wx:if="{{$SpecialCourse$coursesData.length-1>index}}"/>
+      </navigator>
+    </view>
+  </view>
+      <navigator url="./specialCourse" hover-class="none" class="_6d16f66">
+        <view class="more-bottom _6d16f66">查看更多</view>
+      </navigator>
+    </view>
+    <view class="block _6d16f66"/>
+    <view class="open-class _6d16f66">
+      <view class="common-tit _6d16f66">
+        <view class="tit _6d16f66">
+          <image src="../../images/com_tit3.png" class="_6d16f66"/>
+        </view>
+        <navigator url="./openClass" hover-class="none" class="_6d16f66">
+          <view class="more _6d16f66">查看更多<image src="../../images/next.png" class="_6d16f66"/></view>
+        </navigator>
+      </view>
+      <view class="openC-wrap openC-wrap-spe _6d16f66"  wx:for="{{openClass}}" wx:for-item="item" wx:for-index="index" wx:key="{{ind}}">
+        <navigator url="./ocDetail?id={{item.id}}&offset={{offset-index+4}}" hover-class="none" class="_6d16f66">
+          <view class="image-wrap _6d16f66">
+            <view class="unload _6d16f66"><image src="../../images/error.png" class="_6d16f66"/></view>
+            <image src="../../images/new.png" class="new _6d16f66" wx:if="{{index<3}}"/>
+            <view class="img _6d16f66" style="background:url({{item.cover}}) center center;background-size:auto 100%"/>
+          </view>
+          <view class="free-des _6d16f66">
+            <view class="title _6d16f66">{{item.title}}</view>
+            <view class="com-des _6d16f66">{{item.describe}}</view>
+            <view class="learn _6d16f66">
+              <view class="people _6d16f66">共有{{item.play_count||0}}人学过</view>
+              <view class="follow {{item.is_collection?'hightlight':''}} _6d16f66" catchtap="collect" data-tp="1" data-param="openClass" data-id="{{item.id}}" data-ind="{{index}}" data-collect="{{item.is_collection}}">
+                <image src="../../images/follow.png" wx:if="{{!item.is_collection}}" class="_6d16f66"/>
+                <image src="../../images/followed.png" wx:else class="_6d16f66"/>
+                <text class="_6d16f66">{{item.fake_count}}</text>
+              </view>
+            </view>
+          </view>
+        </navigator>
+      </view>
+      <navigator url="./openClass" hover-class="none" class="_6d16f66">
+        <view class="more-bottom _6d16f66">查看更多</view>
+      </navigator>
+    </view>
+    <view class="load-more loading _6d16f66" id="load-more">
+      END
+      <image src="../../images/smile.png" class="smile _6d16f66"/>
+    </view>
+    <view class="tabShadow _6d16f66"/>
+    <view class="toast-wrap _6d16f66" wx:if="{{toastLike}}">
+      <view class="toast-mask _6d16f66"/>
+      <view class="toast _6d16f66">
+        <image src="../../images/toast1.png" class="_6d16f66"/>
+        <view class="toast-title _6d16f66">已对课程感兴趣!</view>
+        <view class="toast-des _6d16f66">您可以在 [ 我的 ] - [ 感兴趣 ]</view>
+        <view class="toast-des _6d16f66">中查看标记过的</view>
+        <view class="toast-button _6d16f66" bindtap="closeToast">我知道了</view>
+      </view>
+    </view>
+    
+  <view  wx:if="{{$LoginBox$shown}}" class="login-box _e92af3e _6d16f66">
+    <view class="modal-box _e92af3e">
+      <view class="login-content _e92af3e">
+        授权登录
+        <view class="login-cont _e92af3e">请先进行微信授权登录</view>
+      </view>
+      <view class="login-btns _e92af3e">
+        <button class="login-btn _e92af3e" open-type="getUserInfo" plain="true" bindgetuserinfo="$LoginBox$getUserInfo">
+          <view bindtap="$LoginBox$hideBox" class="_e92af3e">确定</view>
+        </button>
+      </view>
+    </view>
+  </view>
+  </view>
